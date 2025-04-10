@@ -148,7 +148,7 @@ return function (App $app) {
 
         try {
 
-            $customers = $persist->getCustomersByNameOrEmail($db, $name, $email);
+            $customers = $persist->getCustomersByNameOrEmail($name, $email);
 
             if ($customers) {
                 $response->getBody()->write(json_encode([

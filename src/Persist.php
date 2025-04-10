@@ -67,7 +67,7 @@ class Persist {
             $query->bindValue(':name', '%' . $name . '%', SQLITE3_TEXT);
         } else if (!$name && $email) {
             // Prepare and execute a SELECT query to fetch the customer by email
-            $query = $db->prepare('SELECT *,
+            $query = $this->db->prepare('SELECT *,
                   CASE
                     WHEN annualSpend >= 10000 AND (strftime(\'%s\',\'now\') - time) <= 60*60*24*30*6 THEN \'Platinum\'
                     WHEN annualSpend >= 1000 AND (strftime(\'%s\',\'now\') - time) <= 60*60*24*30*12 THEN \'Gold\'
