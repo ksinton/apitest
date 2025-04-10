@@ -12,7 +12,7 @@ use Ramsey\Uuid\Uuid;
 use App\Persist;
 
 // Include the database initialization file
-require __DIR__ . '/../src/db_init.php';
+require_once __DIR__ . '/../src/db_init.php';
 
 return function (App $app) {
 
