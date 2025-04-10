@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: Customer API
+  version: 1.0.0
+  description: API for managing customer data
+
+servers:
+  - url: http://localhost
+
+paths:
+  /:
+    get:
+      summary: Welcome endpoint
+      responses:
+        '200':
+          description: Welcome message
+
+  /customers:
+    post:
+      summary: Create a new customer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                annualSpend:
+                  type: number
+              required: [name, email, annualSpend]
+      responses:
+        '200':
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Customer'
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+
+    get:
+      summary: Get customers by name or email
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer(s) found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+        '400':
+          description: Missing or conflicting query parameter
+        '404':
+          description: No customers found
+        '500':
+          description: Server error
+
+  /customers/{id}:
+    get:
+      summary: Get a customer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+        '500':
+          description: Server error
+
+    put:
+      summary: Update customer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                annualSpend:
+                  type: number
+      responses:
+        '200':
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  updatedFields:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: No valid fields provided
+        '404':
+          description: Customer not found
+        '500':
+          description: Server error
+
+    delete:
+      summary: Delete a customer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  id:
+                    type: string
+        '404':
+          description: Customer not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        annualSpend:
+          type: number
+        time:
+          type: integer
