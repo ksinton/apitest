@@ -22,6 +22,3 @@ RUN composer install
 
 # Apache permissions
 RUN chown -R www-data:www-data /var/www
-
-# Optional: Use .htaccess
-COPY apache.conf /etc/apache2/sites-available/000-default.conf
