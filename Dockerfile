@@ -23,3 +23,5 @@ RUN chown -R www-data:www-data /var/www/html
 
 # Use custom Apache config to enable .htaccess
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
+
+docker compose up --build
