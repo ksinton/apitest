@@ -3,25 +3,28 @@ FROM php:8.2-apache
 # Enable mod_rewrite for Slim
 RUN a2enmod rewrite
 
-# Install SQLite and other needed extensions
+# Install SQLite and other dependencies needed by composer packages
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     unzip \
+    zip \
+    git \
     && docker-php-ext-install pdo pdo_sqlite
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copy project files into container
-COPY . /var/www/html
+# Copy project files
+COPY . .
 
-# Install Composer
+# Copy Composer from official Composer image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set permissions for Apache
-RUN chown -R www-data:www-data /var/www/html
-
-# Use custom Apache config to enable .htaccess
-COPY apache.conf /etc/apache2/sites-available/000-default.conf
-
+# Run composer install to generate vendor/
 RUN composer install
+
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www
+
+# Use custom Apache config
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
