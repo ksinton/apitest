@@ -1,24 +1,28 @@
 FROM php:8.2-apache
 
-# Enable mod_rewrite
-RUN a2enmod rewrite
-
-# Install dependencies
+# Install system packages
 RUN apt-get update && apt-get install -y \
-    libsqlite3-dev unzip git \
+    unzip curl sqlite3 libsqlite3-dev git nano \
     && docker-php-ext-install pdo pdo_sqlite
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-# Copy source code
-COPY . /var/www
+# Copy all files
+COPY . .
 
-# Run composer install
+# Configure Apache to serve from public/
+RUN echo "DocumentRoot /var/www/html/public" > /etc/apache2/sites-available/000-default.conf
+
+# Install PHP dependencies
 RUN composer install
 
-# Apache permissions
-RUN chown -R www-data:www-data /var/www
+# Expose port
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
